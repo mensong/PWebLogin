@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "PWebLogin": {
+      "commandName": "Project",
+      "commandLineArgs": "-url=https://www.baidu.com/ -user_name=admin2 -password=My@H28367 -user_name_xpath=/html/body/div/section/div/form[1]/div[1]/div/div/input -password_xpath=/html/body/div/section/div/form[1]/div[2]/div/div/input -submit_xpath=/html/body/div/section/div/form[1]/div[4]/div/div -script=LoadScript.js -cookies_file=cookies.txt -user_info_file=userInfo.txt",
+      "workingDirectory": "bin\\run"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}
