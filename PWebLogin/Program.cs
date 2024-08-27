@@ -140,8 +140,8 @@ namespace PWebLogin
             }
             //await m_page.ScreenshotAsync("E:\\1.png");
 
-            //if (!string.IsNullOrEmpty(m_loadedScript))
-            //    await m_page.EvaluateExpressionAsync(m_loadedScript);
+            if (!string.IsNullOrEmpty(m_loadedScript))
+                await m_page.EvaluateExpressionAsync(m_loadedScript);
 
             //准备
             await m_page.DeleteCookieAsync();
