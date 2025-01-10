@@ -138,94 +138,101 @@ namespace PWebLogin
                 await ExitBroswerAsync();
                 return;
             }
-            //await m_page.ScreenshotAsync("E:\\1.png");
 
-            if (!string.IsNullOrEmpty(m_loadedScript))
-                await m_page.EvaluateExpressionAsync(m_loadedScript);
-
-            //准备
-            await m_page.DeleteCookieAsync();
-            await m_page.EvaluateExpressionAsync(@"window.localStorage.clear();");
-
-            //自动登录
-            if (user_name != "" && user_name_xpath != "")
+            try
             {
-                var eles = await m_page.XPathAsync(user_name_xpath);
-                if (eles != null)
-                {
-                    foreach ( var ele in eles )
-                    {
-                        await ele.TypeAsync(user_name);
-                    }
-                }
-            }
-            if (password != "" && password_xpath != "")
-            {
-                var eles = await m_page.XPathAsync(password_xpath);
-                if (eles != null)
-                {
-                    foreach (var ele in eles)
-                    {
-                        await ele.TypeAsync(password);
-                    }
-                }
-            }
-            if (submit_xpath != "")
-            {
-                var eles = await m_page.XPathAsync(submit_xpath);
-                if (eles != null)
-                {
-                    foreach (var ele in eles)
-                    {
-                        await ele.ClickAsync();
-                    }
-                }
-            }
+                //await m_page.ScreenshotAsync("E:\\1.png");
 
-            while (!m_isFinished)
-            {
-                if (m_page.IsClosed)
-                    break;
+                if (!string.IsNullOrEmpty(m_loadedScript))
+                    await m_page.EvaluateExpressionAsync(m_loadedScript);
 
-                Console.WriteLine("等待登录完成...");
+                //准备
+                await m_page.DeleteCookieAsync();
+                await m_page.EvaluateExpressionAsync(@"window.localStorage.clear();");
 
-                CookieParam[] cookies = null;
-                string userConfig = "";
-                try
+                //自动登录
+                if (user_name != "" && user_name_xpath != "")
                 {
-                    //获得cookies
-                    cookies = await m_page.GetCookiesAsync(new string[] { m_page.Url });
-
-                    //获得userConfig
-                    var localStorage = await m_page.EvaluateExpressionAsync<string>(@"window.localStorage.userConfig;");
-                    if (localStorage != null)
+                    var eles = await m_page.XPathAsync(user_name_xpath);
+                    if (eles != null)
                     {
-                        Console.WriteLine("1.获得userConfig:" + localStorage);
-                        userConfig = localStorage;
-                    }
-                }
-                catch (Exception)
-                { }
-                if (cookies != null && cookies.Length > 0 && !string.IsNullOrWhiteSpace(userConfig))
-                {
-                    if (!string.IsNullOrEmpty(cookies_file))
-                    {
-                        string cookiesText = "";
-                        foreach (var cookie in cookies)
+                        foreach (var ele in eles)
                         {
-                            if (cookiesText != "")
-                                cookiesText += "; ";
-                            cookiesText += cookie.Name + "=" + cookie.Value;
+                            await ele.TypeAsync(user_name);
                         }
-                        Console.WriteLine("2.获得Cookies:" + cookiesText);
-                        File.WriteAllText(cookies_file, cookiesText);
                     }
-                    if (!string.IsNullOrEmpty(user_info_file))
-                        File.WriteAllText(user_info_file, userConfig);
-                    break;
+                }
+                if (password != "" && password_xpath != "")
+                {
+                    var eles = await m_page.XPathAsync(password_xpath);
+                    if (eles != null)
+                    {
+                        foreach (var ele in eles)
+                        {
+                            await ele.TypeAsync(password);
+                        }
+                    }
+                }
+                if (submit_xpath != "")
+                {
+                    var eles = await m_page.XPathAsync(submit_xpath);
+                    if (eles != null)
+                    {
+                        foreach (var ele in eles)
+                        {
+                            await ele.ClickAsync();
+                        }
+                    }
                 }
 
-                Thread.Sleep(1000);
+                while (!m_isFinished)
+                {
+                    if (m_page.IsClosed)
+                        break;
+
+                    Console.WriteLine("等待登录完成...");
+
+                    CookieParam[] cookies = null;
+                    string userConfig = "";
+                    try
+                    {
+                        //获得cookies
+                        cookies = await m_page.GetCookiesAsync(new string[] { m_page.Url });
+
+                        //获得userConfig
+                        var localStorage = await m_page.EvaluateExpressionAsync<string>(@"window.localStorage.userConfig;");
+                        if (localStorage != null)
+                        {
+                            Console.WriteLine("1.获得userConfig:" + localStorage);
+                            userConfig = localStorage;
+                        }
+                    }
+                    catch (Exception)
+                    { }
+                    if (cookies != null && cookies.Length > 0 && !string.IsNullOrWhiteSpace(userConfig))
+                    {
+                        if (!string.IsNullOrEmpty(cookies_file))
+                        {
+                            string cookiesText = "";
+                            foreach (var cookie in cookies)
+                            {
+                                if (cookiesText != "")
+                                    cookiesText += "; ";
+                                cookiesText += cookie.Name + "=" + cookie.Value;
+                            }
+                            Console.WriteLine("2.获得Cookies:" + cookiesText);
+                            File.WriteAllText(cookies_file, cookiesText);
+                        }
+                        if (!string.IsNullOrEmpty(user_info_file))
+                            File.WriteAllText(user_info_file, userConfig);
+                        break;
+                    }
+
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception)
+            {
             }
 
             await ExitBroswerAsync();
